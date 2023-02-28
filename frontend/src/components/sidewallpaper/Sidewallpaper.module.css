@@ -1,0 +1,18 @@
+.slideshow {
+  height: 100vh;
+  width: 50%;
+  background-color: #cdb4db;
+}
+
+@media (max-width: 800px) {
+  .slideshow {
+    display: none;
+  }
+
+  .form {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+  }
+}
