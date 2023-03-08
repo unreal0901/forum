@@ -5,7 +5,7 @@ import App from './App';
 import { store } from './redux/store';
 import { Provider } from 'react-redux';
 import theme from './theme';
-import { BrowserRouter } from 'react-router-dom';
+// import { BrowserRouter } from 'react-router-dom';
 
 const container = document.getElementById('root');
 const root = ReactDOM.createRoot(container);
@@ -13,10 +13,8 @@ const root = ReactDOM.createRoot(container);
 root.render(
   <StrictMode>
     <Provider store={store}>
-      <BrowserRouter>
-        <ColorModeScript initialColorMode={theme.config.initialColorMode} />
-        <App />
-      </BrowserRouter>
+      <ColorModeScript initialColorMode={theme.config.initialColorMode} />
+      <App />
     </Provider>
   </StrictMode>
 );

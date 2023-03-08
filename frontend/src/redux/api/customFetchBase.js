@@ -12,7 +12,7 @@ const baseQuery = fetchBaseQuery({
 });
 
 const customFetchBase = async (args, api, extraOptions) => {
-  await Mutex.waitForUnlock();
+  await mutex.waitForUnlock();
   let result = await baseQuery(args, api, extraOptions);
   if (result.error?.data?.message === 'You are not logged in') {
     if (!mutex.isLocked()) {

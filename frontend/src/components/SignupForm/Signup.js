@@ -22,11 +22,13 @@ import {
 import { Field, Formik } from 'formik';
 import { Link, useNavigate } from 'react-router-dom';
 
+import VerificationPage from '../VerificationPage/VerificationPage';
 // const REGISTER_URL = "/auth/register";
 
 const Signup = () => {
   const navigate = useNavigate();
-  const [show, setShow] = React.useState(false);
+  const [show, setShow] = useState(false);
+  const [verify, setVerify] = useState(true);
   // const [loading, setLoading] = useState(false);
   // const [success, setSuccess] = useState(false);
   const [error, setError] = useState(false);
@@ -48,27 +50,37 @@ const Signup = () => {
 
   console.log(error, isSuccess, isLoading, isError);
 
-  // useEffect(() => {
-  //   const el = document.querySelector(`.${styles.blurred}`);
-  //   if (el) {
-  //     if (isLoading === true) {
-  //       el.style.display = 'block';
-  //     }
-  //     if (isLoading === false) el.style.display = 'none';
-  //   }
-  // }, [isLoading]);
+  useEffect(() => {
+    const el = document.querySelector(`.${styles.blurred}`);
+    if (el) {
+      if (isLoading === true) {
+        el.style.display = 'block';
+      }
+      if (isLoading === false) el.style.display = 'none';
+    }
+  }, [isLoading]);
 
   useEffect(() => {
     if (isError) {
       setError(true);
     }
+
+    let timerId = setTimeout(() => {
+      setError(false);
+    }, 3000);
+
+    return () => {
+      clearTimeout(timerId);
+    };
   }, [isError]);
 
   useEffect(() => {
     let timeout;
     if (isSuccess) {
       timeout = setTimeout(() => {
-        navigate('/login');
+        // navigate('/verfy');
+        // history.pushState('');
+        setVerify(true);
       }, 1500);
     }
     return () => {
@@ -129,243 +141,263 @@ const Signup = () => {
     <>
       {/* <div className={styles.slideshow}>slideshow</div> */}
       <div className={styles.form}>
-        <div className={styles.blurred}></div>
-        {error ? (
-          <div className={styles.registererror}>
-            <Box>
-              {errorObj ? <Text>Error occured</Text> : null}
-              <Text>Error occured</Text>
-            </Box>
-          </div>
-        ) : null}
-        {isSuccess ? (
-          <div className={styles.success}>
-            <Box>
-              <Text fontSize="18px">Account succesfully created!!</Text>
-              <Text fontSize="18px">Redirecting to login page..</Text>
-            </Box>
-          </div>
-        ) : null}
-        <Box
-          w="100%"
-          h="100%"
-          display="flex"
-          flexDirection="column"
-          justifyContent="center"
-          alignItems="center"
-        >
-          <Box
-            h="20%"
-            display="flex"
-            justifyContent="flex-end"
-            flexDirection="column"
-            alignItems="center"
-            // mb={10}
-          >
-            <Box>
-              <img className={styles.logo} src={Logo} alt="Logo" />
-            </Box>
-            <Text
-              fontSize="3em"
-              // h="100%"
-              textAlign="center"
-              color="gray.700"
-              mb={2}
+        {verify ? (
+          <VerificationPage setVerify={setVerify} />
+        ) : (
+          <>
+            <div className={styles.verificationPopup}>
+              <Box>
+                {isSuccess ? (
+                  <>
+                    <Text>Verify Email</Text>
+                    <Text>Verification Code Sent to Email</Text>
+                  </>
+                ) : null}
+              </Box>
+            </div>
+            <div className={styles.blurred}></div>
+            {error ? (
+              <div className={styles.registererror}>
+                <Box>
+                  {errorObj ? <Text>Error occured</Text> : null}
+                  <Text>Error occured</Text>
+                </Box>
+              </div>
+            ) : null}
+            {isSuccess ? (
+              <div className={styles.success}>
+                <Box>
+                  <Text fontSize="18px">Account succesfully created!!</Text>
+                  <Text fontSize="18px">Redirecting to login page..</Text>
+                </Box>
+              </div>
+            ) : null}
+            <Box
+              w="100%"
+              h="100%"
+              display="flex"
+              flexDirection="column"
+              justifyContent="center"
+              alignItems="center"
             >
-              Register
-            </Text>
-          </Box>
-          <Box
-            h="60%"
-            w="100%"
-            pr="10px"
-            pl="10px"
-            display="flex"
-            flexDirection="column"
-            justifyContent="flex-start"
-            alignItems="center"
-          >
-            <Formik
-              initialValues={{
-                name: '',
-                email: '',
-                password: '',
-              }}
-              validationSchema={SignUpSchema}
-              // onSubmit={registerHandler}
-              onSubmit={registerHandler}
-            >
-              {({
-                handleSubmit,
-                errors,
-                touched,
-                values,
-                handleChange,
-                handleBlur,
-                isSubmitting,
-              }) => (
-                <>
-                  {isSubmitting || isLoading ? (
-                    <div className={styles.isSubmitting}>
-                      <Spinner
-                        thickness="10px"
-                        speed="0.65s"
-                        emptyColor="gray.200"
-                        color="brand.500"
-                        width="200px"
-                        height="200px"
-                      />
-                    </div>
-                  ) : null}
-                  <form
-                    className={styles.formContainer}
-                    onSubmit={handleSubmit}
-                  >
-                    <Stack direction="column" spacing={4} w="100%">
-                      <Box>
-                        <FormControl
-                          required
-                          isInvalid={errors.name && touched.name}
-                        >
-                          <FormLabel
-                            htmlFor="name"
-                            fontSize="1.5em"
-                            color="gray.600"
-                          >
-                            Full Name
-                          </FormLabel>
-                          <Input
-                            value={values.name}
-                            onChange={handleChange}
-                            onBlur={handleBlur}
-                            id="name"
-                            name="name"
-                            required
-                            focusBorderColor="brand.500"
-                            type="text"
-                            h="50px"
-                            placeholder="Enter full name"
+              <Box
+                h="20%"
+                display="flex"
+                justifyContent="flex-end"
+                flexDirection="column"
+                alignItems="center"
+                // mb={10}
+              >
+                <Box>
+                  <img className={styles.logo} src={Logo} alt="Logo" />
+                </Box>
+                <Text
+                  fontSize="3em"
+                  // h="100%"
+                  textAlign="center"
+                  color="gray.700"
+                  mb={2}
+                >
+                  Register
+                </Text>
+              </Box>
+              <Box
+                h="60%"
+                w="100%"
+                pr="10px"
+                pl="10px"
+                display="flex"
+                flexDirection="column"
+                justifyContent="flex-start"
+                alignItems="center"
+              >
+                <Formik
+                  initialValues={{
+                    name: '',
+                    email: '',
+                    password: '',
+                  }}
+                  validationSchema={SignUpSchema}
+                  // onSubmit={registerHandler}
+                  onSubmit={registerHandler}
+                >
+                  {({
+                    handleSubmit,
+                    errors,
+                    touched,
+                    values,
+                    handleChange,
+                    handleBlur,
+                    isSubmitting,
+                  }) => (
+                    <>
+                      {isSubmitting || isLoading ? (
+                        <div className={styles.isSubmitting}>
+                          <Spinner
+                            thickness="10px"
+                            speed="0.65s"
+                            emptyColor="gray.200"
+                            color="brand.500"
+                            width="200px"
+                            height="200px"
                           />
-                          <FormErrorMessage>{errors.name}</FormErrorMessage>
-                        </FormControl>
-                      </Box>
-                      <Box>
-                        <FormControl
-                          required
-                          isInvalid={errors.email && touched.email}
-                        >
-                          <FormLabel
-                            htmlFor="email"
-                            fontSize="1.5em"
-                            color="gray.600"
-                          >
-                            Email
-                          </FormLabel>
-                          <InputGroup>
-                            <Field
-                              as={Input}
-                              id="email"
-                              name="email"
-                              focusBorderColor="brand.500"
-                              value={values.email}
-                              onChange={handleChange}
-                              type="email"
-                              h="50px"
-                              placeholder="Enter email"
-                            />
-                            <InputRightElement
-                              color="brand.500"
-                              fontSize="25px"
-                              h="100%"
-                              w="50px"
-                            >
-                              <i className="fa-solid fa-at"></i>
-                            </InputRightElement>
-                          </InputGroup>
-                          <FormErrorMessage>{errors.email}</FormErrorMessage>
-                        </FormControl>
-                      </Box>
-                      <Box>
-                        <FormControl
-                          required
-                          isInvalid={errors.password && touched.password}
-                        >
-                          <FormLabel
-                            htmlFor="password"
-                            fontSize="1.5em"
-                            color="gray.600"
-                          >
-                            Password
-                          </FormLabel>
-                          <InputGroup size="md">
-                            <Field
-                              as={Input}
-                              autoComplete="on"
-                              id="password"
-                              name="password"
-                              value={values.password}
-                              onChange={handleChange}
-                              h="50px"
-                              focusBorderColor="brand.500"
-                              pr="4.5rem"
-                              type={show ? 'text' : 'password'}
-                              placeholder="Enter password"
-                            />
-                            <InputRightElement
-                              color="brand.500"
-                              fontSize="25px"
-                              h="100%"
-                              w="50px"
-                              cursor="pointer"
-                              onClick={handleClick}
-                            >
-                              {show ? (
-                                <i className="fa-solid fa-eye-slash"></i>
-                              ) : (
-                                <i className="fa-sharp fa-solid fa-eye"></i>
-                              )}
-                            </InputRightElement>
-                          </InputGroup>
-                          <FormErrorMessage>{errors.password}</FormErrorMessage>
-                        </FormControl>
-                      </Box>
-                      <Box
-                        // isLoading
-                        display="flex"
-                        justifyContent="center"
-                        alignItems="center"
+                        </div>
+                      ) : null}
+                      <form
+                        className={styles.formContainer}
+                        onSubmit={handleSubmit}
                       >
-                        <Button
-                          h="50px"
-                          fontSize="1.2em"
-                          w="100%"
-                          colorScheme="brand"
-                          isLoading={isSubmitting}
-                          type="submit"
-                        >
-                          Submit
-                        </Button>
-                      </Box>
-                    </Stack>
-                  </form>
-                </>
-              )}
-            </Formik>
-            <Text
-              display="inline"
-              align="center"
-              color="gray.500"
-              mt={2}
-              pb="5px"
-            >
-              Already registered?{' '}
-              <span className={styles.login}>
-                {' '}
-                <Link to="/login">Login</Link>
-              </span>
-            </Text>
-          </Box>
-        </Box>
+                        <Stack direction="column" spacing={4} w="100%">
+                          <Box>
+                            <FormControl
+                              required
+                              isInvalid={errors.name && touched.name}
+                            >
+                              <FormLabel
+                                htmlFor="name"
+                                fontSize="1.5em"
+                                color="gray.600"
+                              >
+                                Full Name
+                              </FormLabel>
+                              <Input
+                                value={values.name}
+                                onChange={handleChange}
+                                onBlur={handleBlur}
+                                id="name"
+                                name="name"
+                                required
+                                focusBorderColor="brand.500"
+                                type="text"
+                                h="50px"
+                                placeholder="Enter full name"
+                              />
+                              <FormErrorMessage>{errors.name}</FormErrorMessage>
+                            </FormControl>
+                          </Box>
+                          <Box>
+                            <FormControl
+                              required
+                              isInvalid={errors.email && touched.email}
+                            >
+                              <FormLabel
+                                htmlFor="email"
+                                fontSize="1.5em"
+                                color="gray.600"
+                              >
+                                Email
+                              </FormLabel>
+                              <InputGroup>
+                                <Field
+                                  as={Input}
+                                  id="email"
+                                  name="email"
+                                  focusBorderColor="brand.500"
+                                  value={values.email}
+                                  onChange={handleChange}
+                                  type="email"
+                                  h="50px"
+                                  placeholder="Enter email"
+                                />
+                                <InputRightElement
+                                  color="brand.500"
+                                  fontSize="25px"
+                                  h="100%"
+                                  w="50px"
+                                >
+                                  <i className="fa-solid fa-at"></i>
+                                </InputRightElement>
+                              </InputGroup>
+                              <FormErrorMessage>
+                                {errors.email}
+                              </FormErrorMessage>
+                            </FormControl>
+                          </Box>
+                          <Box>
+                            <FormControl
+                              required
+                              isInvalid={errors.password && touched.password}
+                            >
+                              <FormLabel
+                                htmlFor="password"
+                                fontSize="1.5em"
+                                color="gray.600"
+                              >
+                                Password
+                              </FormLabel>
+                              <InputGroup size="md">
+                                <Field
+                                  as={Input}
+                                  autoComplete="on"
+                                  id="password"
+                                  name="password"
+                                  value={values.password}
+                                  onChange={handleChange}
+                                  h="50px"
+                                  focusBorderColor="brand.500"
+                                  pr="4.5rem"
+                                  type={show ? 'text' : 'password'}
+                                  placeholder="Enter password"
+                                />
+                                <InputRightElement
+                                  color="brand.500"
+                                  fontSize="25px"
+                                  h="100%"
+                                  w="50px"
+                                  cursor="pointer"
+                                  onClick={handleClick}
+                                >
+                                  {show ? (
+                                    <i className="fa-solid fa-eye-slash"></i>
+                                  ) : (
+                                    <i className="fa-sharp fa-solid fa-eye"></i>
+                                  )}
+                                </InputRightElement>
+                              </InputGroup>
+                              <FormErrorMessage>
+                                {errors.password}
+                              </FormErrorMessage>
+                            </FormControl>
+                          </Box>
+                          <Box
+                            // isLoading
+                            display="flex"
+                            justifyContent="center"
+                            alignItems="center"
+                          >
+                            <Button
+                              h="50px"
+                              fontSize="1.2em"
+                              w="100%"
+                              colorScheme="brand"
+                              isLoading={isSubmitting}
+                              type="submit"
+                            >
+                              Submit
+                            </Button>
+                          </Box>
+                        </Stack>
+                      </form>
+                    </>
+                  )}
+                </Formik>
+                <Text
+                  display="inline"
+                  align="center"
+                  color="gray.500"
+                  mt={2}
+                  pb="5px"
+                >
+                  Already registered?{' '}
+                  <span className={styles.login}>
+                    {' '}
+                    <Link to="/login">Login</Link>
+                  </span>
+                </Text>
+              </Box>
+            </Box>
+          </>
+        )}
       </div>
     </>
   );

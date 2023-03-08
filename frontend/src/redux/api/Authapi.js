@@ -30,8 +30,8 @@ export const authApi = createApi({
       },
     }),
     verifyEmail: builder.mutation({
-      query({ verificationCode }) {
-        return { url: `verifyemail/${verificationCode}`, method: 'GET' };
+      query(data) {
+        return { url: `verifyemail/${data.verification}`, method: 'GET' };
       },
     }),
     logoutUser: builder.mutation({

@@ -1,21 +1,39 @@
 import React from 'react';
 import Signup from './components/SignupForm/Signup';
 import Login from './components/LoginForm/Login';
-import { Route, Routes } from 'react-router-dom';
+import {
+  createBrowserRouter,
+  createRoutesFromElements,
+  Route,
+  RouterProvider,
+  // Routes,
+} from 'react-router-dom';
+
+// Front Page for layout [shared layout]
 import SideWallpaper from './components/sidewallpaper/SideWallpaper';
 import styles from './app.module.css';
 // import { useSelector } from "react-redux";
 
 import {
   ChakraProvider,
-  Box,
+  // Box,
   // Text,
   // VStack,
   // Code,
-  Grid,
+  // Grid,
 } from '@chakra-ui/react';
-import { ColorModeSwitcher } from './ColorModeSwitcher';
+// import { ColorModeSwitcher } from './ColorModeSwitcher';
 import theme from './theme';
+
+const router = createBrowserRouter(
+  createRoutesFromElements(
+    <Route path="/" element={<SideWallpaper />}>
+      <Route index element={<Signup />} />
+      <Route path="register" element={<Signup />} />
+      <Route path="login" element={<Login />} />
+    </Route>
+  )
+);
 
 function App() {
   return (
@@ -23,13 +41,7 @@ function App() {
       <div className={styles.frontpage}>
         {/* <Grid minH="100vh" p={3}> */}
         {/* <ColorModeSwitcher justifySelf="flex-end" /> */}
-        <Routes>
-          <Route path="/" element={<SideWallpaper />}>
-            <Route index element={<Signup />} />
-            <Route path="register" element={<Signup />} />
-            <Route path="login" element={<Login />} />
-          </Route>
-        </Routes>
+        <RouterProvider router={router} />
         {/* </Grid> */}
       </div>
     </ChakraProvider>
