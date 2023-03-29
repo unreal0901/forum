@@ -1,18 +1,12 @@
 import React, { useEffect, useState } from 'react';
-// import { useDispatch, useSelector } from "react-redux";
-// import { selectCurrentToken } from "../../../features/auth/authSlice";
-// import Authuser from "../../../api/Authuser";
 import styles from './Login.module.css';
 import Logo from '../../assets/logo.png';
-// import axios from "../../../api/axios";
 import {
   Box,
   Button,
   Checkbox,
   FormControl,
   FormErrorMessage,
-  // Button,
-  // FormControl,
   FormLabel,
   Input,
   InputGroup,
@@ -23,12 +17,14 @@ import {
 } from '@chakra-ui/react';
 import { Field, Formik } from 'formik';
 import { Link, Navigate, useNavigate } from 'react-router-dom';
-
-// const LOGIN_URL = "/auth/login";
+import { useLoginUserMutation } from '../../redux/api/Authapi';
+import { LoginSchema } from '../schemas/loginSchema';
 
 const Login = () => {
-  // const alreadylogin = useSelector(selectCurrentLogin);
-
+  const [success, setsuccess] = useState(false);
+  const [show, setShow] = React.useState(false);
+  const [errorflag, setErrorflag] = useState(false);
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   // useEffect(() => {
@@ -47,12 +43,56 @@ const Login = () => {
 
   // const userRef = useRef();
   // const errRef = useRef();
-  const [show, setShow] = React.useState(false);
-  const [error, setError] = useState([false, {}]);
-  const [loading, setLoading] = useState(false);
   // const [success, setsuccess] = useState(false);
 
-  // const [login, { isLoading, isSuccess }] = useLoginMutation();
+  const [login, { isLoading, isSuccess, isError, error }] =
+    useLoginUserMutation();
+
+  useEffect(() => {
+    const el = document.querySelector(`.${styles.blurred}`);
+    if (el) {
+      if (isLoading === true) {
+        el.style.display = 'block';
+      }
+      if (isLoading === false) el.style.display = 'none';
+    }
+  }, [isLoading]);
+
+  useEffect(() => {
+    if (isError) {
+      setErrorflag(true);
+    }
+
+    let timerId = setTimeout(() => {
+      setErrorflag(false);
+    }, 3000);
+
+    return () => {
+      clearTimeout(timerId);
+    };
+  }, [isError]);
+
+  useEffect(() => {
+    if (isSuccess) {
+      navigate('/app/profile');
+    }
+  });
+
+  useEffect(() => {
+    let timeout;
+    if (isError) {
+      timeout = setTimeout(() => {
+        // setError([false, {}]);
+        const el = document.querySelector(`.${styles.blurred}`);
+        el.style.display = 'none';
+        setErrorflag(false);
+      }, 2000);
+    }
+    return () => {
+      clearTimeout(timeout);
+    };
+  });
+
   // const dispatch = useDispatch();
 
   // useEffect(() => {
@@ -79,78 +119,27 @@ const Login = () => {
     setShow(!show);
   };
 
-  // const loginHandler = async (values, { setSubmitting, resetForm }) => {
-  //   setLoading(true);
-  //   const payload = {
-  //     name: values.name,
-  //     email: values.email,
-  //     password: values.password,
-  //   };
-  //   resetForm();
-  //   try {
-  //     const user = payload.name;
-  //     const userData = await login(payload).unwrap();
-  //     // dispatch(setCredentials({ ...userData, user }));
-  //     // const response = await axios.post(LOGIN_URL, payload, {
-  //     //   headers: { "Content-Type": "application/json" },
-  //     //   withCredentials: true,
-  //     // });
-  //     // if (response.data.success) {
-  //     //   setsuccess(true);
-  //     //   const res = response.data.data;
-  //     //   const { token, ...user } = res;
-  //     //   setToken(user, token);
-  //     // }
-  //     dispatch(setlogin({ status: true }));
-  //     navigate("/profile", { replace: true });
-  //   } catch (e) {
-  //     if (e.response) {
-  //       // console.log(e.response);
-  //       setError([true, e.response.data]);
-  //     } else {
-  //       console.log(e.data);
-  //       setError([true, e.data]);
-  //     }
-  //     // errRef.current.focus();
-  //   } finally {
-  //     setSubmitting(false);
-  //     setLoading(false);
-  //   }
-  // };
-
-  // const handleRelease = () => setShow(false);
-
-  // const validatePassword = (value) => {
-  //   let error;
-  //   if (!value) error = "Password is required";
-  //   else if (value.length <= 6) {
-  //     error = "Length should be greater than 6";
-  //   }
-  //   return error;
-  // };
-
-  const loginHandler = () => {};
-  // const handleClick = () => {};
-
-  let isSuccess = false;
-  let isLoading = false;
+  const loginHandler = (values, { setSubmitting, resetForm }) => {
+    const payload = {
+      email: values.email,
+      password: values.password,
+    };
+    resetForm();
+    const data = login(payload).unwrap();
+    console.log(data);
+    setSubmitting(false);
+  };
 
   return (
     <>
       {/* <div className={styles.slideshow}>slideshow</div> */}
       <div className={styles.form}>
         <div className={styles.blurred}></div>
-        {error[0] ? (
+        {errorflag ? (
           <div className={styles.loginerror}>
             <Box>
-              <Text>
-                {error[1]?.statusCode || error[1].status || error[1].code}
-              </Text>
-              <Text>
-                {Array.isArray(error[1].message)
-                  ? error[1].message[0]
-                  : error[1]?.message || error[1].error || error[1]}
-              </Text>
+              <Text>{JSON.stringify(error)}</Text>
+              <Text>{JSON.stringify(error)}</Text>
             </Box>
           </div>
         ) : null}
@@ -213,6 +202,7 @@ const Login = () => {
                 password: '',
                 rememberMe: false,
               }}
+              validationSchema={LoginSchema}
               onSubmit={loginHandler}
             >
               {({

@@ -11,7 +11,8 @@ import React, { useEffect, useState } from 'react';
 import styles from './Verification.module.css';
 import { useVerifyEmailMutation } from '../../redux/api/Authapi';
 import { useNavigate } from 'react-router-dom';
-const VerificationPage = ({ pin, setVerify }) => {
+const VerificationPage = ({ pin, setVerify, setSuccess }) => {
+  const [pinval, setPinval] = useState('');
   const [error, setError] = useState(false);
   const [verify, { isSuccess, isLoading, isError }] = useVerifyEmailMutation();
   console.log(isSuccess, isLoading, isError);
@@ -24,6 +25,7 @@ const VerificationPage = ({ pin, setVerify }) => {
     };
     console.log(payload);
     verify(payload);
+    setPinval('');
   };
 
   useEffect(() => {
@@ -80,6 +82,8 @@ const VerificationPage = ({ pin, setVerify }) => {
 
           <HStack>
             <PinInput
+              value={pinval}
+              onChange={e => setPinval(e)}
               colorScheme="brand"
               focusBorderColor="brand.500"
               size={['md', 'lg']}
@@ -109,6 +113,7 @@ const VerificationPage = ({ pin, setVerify }) => {
               colorScheme="pink"
               onClick={() => {
                 setVerify(false);
+                setSuccess(false);
               }}
             >
               Registration

@@ -1,14 +1,15 @@
+// import * as dotenv from 'dotenv';
 import { fetchBaseQuery } from '@reduxjs/toolkit/dist/query';
 import { Mutex } from 'async-mutex';
 import { logOut } from '../features/UserSlice';
 
-const baseUrl = 'http://localhost:8000';
-
 // Creates a new mutex,to prevent multiple requests to /api/auth/refresh
 const mutex = new Mutex();
+const BASE_URL = process.env.REACT_APP_BASE_URL;
 
+console.log(process.env);
 const baseQuery = fetchBaseQuery({
-  baseUrl: `${baseUrl}/api/auth`,
+  baseUrl: `${BASE_URL}/api/auth`,
 });
 
 const customFetchBase = async (args, api, extraOptions) => {

@@ -28,9 +28,9 @@ import VerificationPage from '../VerificationPage/VerificationPage';
 const Signup = () => {
   const navigate = useNavigate();
   const [show, setShow] = useState(false);
-  const [verify, setVerify] = useState(true);
+  const [verify, setVerify] = useState(false);
   // const [loading, setLoading] = useState(false);
-  // const [success, setSuccess] = useState(false);
+  const [success, setSuccess] = useState(false);
   const [error, setError] = useState(false);
   const handleClick = () => {
     setShow(!show);
@@ -77,6 +77,7 @@ const Signup = () => {
   useEffect(() => {
     let timeout;
     if (isSuccess) {
+      setSuccess(true);
       timeout = setTimeout(() => {
         // navigate('/verfy');
         // history.pushState('');
@@ -84,9 +85,10 @@ const Signup = () => {
       }, 1500);
     }
     return () => {
+      setSuccess(false);
       clearTimeout(timeout);
     };
-  });
+  }, [isSuccess]);
 
   useEffect(() => {
     let timeout;
@@ -105,36 +107,17 @@ const Signup = () => {
 
   // const registerHandler = () => {};
 
-  const registerHandler = async (values, { setSubmitting, resetForm }) => {
-    // setLoading(true);
+  const registerHandler = (values, { setSubmitting, resetForm }) => {
+    setSubmitting(true);
     const payload = {
-      name: values.name,
+      fullName: values.name,
       email: values.email,
       password: values.password,
     };
     resetForm();
-    // const response = await axios.post(REGISTER_URL, payload, {
-    //   headers: { "Content-Type": "application/json" },
-    //   // withCredentials: true,
-    // });
     const data = register(payload).unwrap();
     console.log(data);
-
-    //   // console.log(response.data.success);
-    //   if (response.data.success) {
-    //     setSuccess(true);
-    //     setLoading(true);
-    //   } else setSuccess(false);
-    // } catch (e) {
-    //   if (e.data) {
-    //     console.log(e);
-    //     console.log(e.data);
-    //     setError([true, e.data]);
-    //   } else setError([true, e]);
-    // } finally {
     setSubmitting(false);
-    //   setLoading(false);
-    // }
   };
 
   return (
@@ -142,15 +125,19 @@ const Signup = () => {
       {/* <div className={styles.slideshow}>slideshow</div> */}
       <div className={styles.form}>
         {verify ? (
-          <VerificationPage setVerify={setVerify} />
+          <VerificationPage setVerify={setVerify} setSuccess={setSuccess} />
         ) : (
           <>
             <div className={styles.verificationPopup}>
               <Box>
-                {isSuccess ? (
+                {success ? (
                   <>
-                    <Text>Verify Email</Text>
-                    <Text>Verification Code Sent to Email</Text>
+                    <div className={styles.toast}>
+                      <Box>
+                        <Text>Verify Email</Text>
+                        <Text>Verification Code Sent to Email</Text>
+                      </Box>
+                    </div>
                   </>
                 ) : null}
               </Box>
@@ -164,7 +151,7 @@ const Signup = () => {
                 </Box>
               </div>
             ) : null}
-            {isSuccess ? (
+            {success ? (
               <div className={styles.success}>
                 <Box>
                   <Text fontSize="18px">Account succesfully created!!</Text>

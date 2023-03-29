@@ -18,18 +18,18 @@ app.use(express.json({ limit: "10kb" }));
 // 2. Cookie Parser
 app.use(cookieParser());
 
-// 3. Logger
-if (process.env.NODE_ENV === "development") app.use(morgan("dev"));
-
-// 4. Cors
+// 3. Cors
 app.use(
   cors({
+    origin: config.get<string>("origin"),
     credentials: true,
-    origin: ["http://localhost:3000"],
   })
 );
 
-// Routes
+// 4. Logger
+if (process.env.NODE_ENV === "development") app.use(morgan("dev"));
+
+// 5. Routes
 app.use("/api/users", userRouter);
 app.use("/api/auth", authRouter);
 
@@ -39,7 +39,7 @@ app.get(
   (req: Request, res: Response, next: NextFunction) => {
     res.status(200).json({
       status: "success",
-      message: "Testing , Healthy👈👈",
+      message: "Forum Website Server Working Fine",
     });
   }
 );

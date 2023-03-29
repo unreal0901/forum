@@ -19,7 +19,7 @@ export const authApi = createApi({
           url: 'login',
           method: 'POST',
           body: data,
-          Credential: 'include',
+          credentials: 'include',
         };
       },
       async onQueryStarted(args, { dispatch, queryFulfilled }) {
