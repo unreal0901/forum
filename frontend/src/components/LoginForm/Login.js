@@ -19,13 +19,25 @@ import { Field, Formik } from 'formik';
 import { Link, Navigate, useNavigate } from 'react-router-dom';
 import { useLoginUserMutation } from '../../redux/api/Authapi';
 import { LoginSchema } from '../schemas/loginSchema';
-
+import { useSelector } from 'react-redux';
+import { getUser } from '../../redux/features/UserSlice';
+import { useGetMeQuery } from '../../redux/api/Userapi';
 const Login = () => {
   const [success, setsuccess] = useState(false);
   const [show, setShow] = React.useState(false);
   const [errorflag, setErrorflag] = useState(false);
   const [loading, setLoading] = useState(false);
+
+  const { isFetching } = useGetMeQuery();
+
+  const user = useSelector(getUser);
   const navigate = useNavigate();
+  console.log(user);
+  useEffect(() => {
+    if (user) {
+      navigate('/app/profile');
+    }
+  });
 
   // useEffect(() => {
   //   if (selectCurrentToken) {

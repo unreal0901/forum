@@ -1,14 +1,14 @@
-import mongoose from 'mongoose';
-import config from 'config';
+import mongoose from "mongoose";
+import config from "config";
 
-const dbUrl = `mongodb://${config.get('dbName')}:${config.get(
-  'dbPass'
-)}@localhost:6000/jwtAuth?authSource=admin`;
+const dbUrl = `mongodb://${config.get("dbName")}:${config.get(
+  "dbPass"
+)}@localhost:6000/${config.get("databaseName")}?authSource=admin`;
 
 const connectDB = async () => {
   try {
     await mongoose.connect(dbUrl);
-    console.log('Database connected...');
+    console.log("Database connected...");
   } catch (error: any) {
     console.log(error.message);
     setTimeout(connectDB, 5000);

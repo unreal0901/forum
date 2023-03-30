@@ -10,13 +10,13 @@ export const authApi = createApi({
   endpoints: builder => ({
     registerUser: builder.mutation({
       query(data) {
-        return { url: 'register', method: 'POST', body: data };
+        return { url: 'auth/register', method: 'POST', body: data };
       },
     }),
     loginUser: builder.mutation({
       query(data) {
         return {
-          url: 'login',
+          url: 'auth/login',
           method: 'POST',
           body: data,
           credentials: 'include',
@@ -31,13 +31,13 @@ export const authApi = createApi({
     }),
     verifyEmail: builder.mutation({
       query(data) {
-        return { url: `verifyemail/${data.verification}`, method: 'GET' };
+        return { url: `auth/verifyemail/${data.verification}`, method: 'GET' };
       },
     }),
     logoutUser: builder.mutation({
       query() {
         return {
-          url: 'logout',
+          url: 'auth/logout',
           credentials: 'include',
         };
       },

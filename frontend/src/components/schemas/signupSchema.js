@@ -8,5 +8,5 @@ export const SignUpSchema = Yup.object().shape({
 
   password: Yup.string()
     .required('Password is required')
-    .min(6, 'Password is too short - should be 6 chars minimum'),
+    .min(8, 'Password is too short - should be 6 chars minimum'),
 });

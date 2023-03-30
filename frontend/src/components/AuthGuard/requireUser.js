@@ -10,6 +10,8 @@ const RequireUser = ({ children }) => {
   const { isFetching, isLoading } = useGetMeQuery();
   const [cookies] = useCookies(['logged_in']);
   const location = useLocation();
+  const user = useSelector(getUser);
+  console.log(user);
 
   // const { isLoading, isFetching } = userApi.endpoints.getMe.useQuery(null, {
   //   skip: false,
@@ -17,7 +19,6 @@ const RequireUser = ({ children }) => {
   // });
 
   const loading = isLoading || isFetching;
-
   return (
     <>
       {loading ? <FullScreenLoader /> : null}
